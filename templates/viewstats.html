@@ -1,0 +1,86 @@
+{% for stat in pstats %}
+<!-- Modal para ver detalles -->
+<form id="view_form_{{ stat.nombre }}" method="POST" action="/updatestats">
+    <table class="table table-hover">
+        <tr>
+            <th>Nombre</th>
+            <th>{{stat.nombre}}</th>
+        </tr>
+        <tr>
+            <th>Raza</th>
+            <th>
+                <select name="Raza" id="Raza_{{ stat.nombre }}" class="form-control" required="true" onchange="mostrarSprite('{{ stat.nombre }}')">
+                    <option value="">Selecciona una raza</option>
+                    <option value="Jiren" {% if stat.raza == 'Jiren' %}selected{% endif %}>Jiren</option>
+                    <option value="Sayan" {% if stat.raza == 'Sayan' %}selected{% endif %}>Sayan</option>
+                    <option value="Namekusein" {% if stat.raza == 'Namekusein' %}selected{% endif %}>Namekusein</option>
+                </select>
+            </th>
+        </tr>
+        <tr>
+            <th>Nivel</th>
+            <th><input type="text" value="{{ stat.nivel }}" name="Nivel" id="Nivel" class="form-control" required="true"></th>
+        </tr>
+        <tr>
+            <th>Daño</th>
+            <th><input type="text" value="{{ stat.daño }}" name="Daño" id="Daño" class="form-control" required="true"></th>
+        </tr>
+        <tr>
+            <th>Resistencia</th>
+            <th><input type="text" value="{{ stat.resistencia }}" name="Resistencia" id="Resistencia" class="form-control" required="true"></th>
+        </tr>
+        <tr>
+            <input type="hidden" name="id" id="id" value="{{ stat.nombre }}">
+            <th colspan="2">
+                <a href="/deletestats/{{ stat.nombre }}" class="btn btn-outline btn-danger" onclick="return confirm('Está seguro de eliminar este registro?')">Eliminar</a>
+                <button type="submit" class="btn btn-outline btn-success">Actualizar</button>
+            </th>
+        </tr>
+    </table>
+    <!-- Div para mostrar el sprite en el modal -->
+    <div id="spriteContainer_{{ stat.nombre }}" style="display:none; text-align:center; margin-top:15px;">
+        <img id="spriteImage_{{ stat.nombre }}" src="" alt="Sprite" style="width: 200px; height: 300px;">
+    </div>
+</form>
+{% endfor %}
+
+
+
+<script>
+   // Función para mostrar el sprite correspondiente a la raza seleccionada
+function mostrarSprite(statNombre) {
+    var raza = document.getElementById('Raza_' + statNombre).value;
+    var spriteImage = document.getElementById('spriteImage_' + statNombre);
+    var spriteContainer = document.getElementById('spriteContainer_' + statNombre);
+
+    if (raza) {
+        var spriteUrl = '';
+        switch (raza) {
+            case 'Jiren':
+                spriteUrl = '/static/sprites/jiren.png';
+                break;
+            case 'Sayan':
+                spriteUrl = '/static/sprites/sayan.png';
+                break;
+            case 'Namekusein':
+                spriteUrl = '/static/sprites/namekusein.png';
+                break;
+        }
+
+        spriteImage.src = spriteUrl;
+        spriteContainer.style.display = 'block';
+    } else {
+        spriteContainer.style.display = 'none';
+    }
+}
+
+// Ocultar el sprite cuando se cierra el modal específico
+function ocultarSprite(statNombre) {
+    document.getElementById('spriteContainer_' + statNombre).style.display = 'none';
+    document.getElementById('spriteImage_' + statNombre).src = '';  // Limpia la imagen del sprite
+}
+    // Ocultar el sprite cuando se cierra el modal
+    $('#viewField').on('hidden.bs.modal', function () {
+        $("#spriteContainer").hide();
+    });
+</script>
